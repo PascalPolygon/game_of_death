@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+typedef struct CELL
+{
+  double health;
+  int neighbors;
+  struct CELL *right, *down;
+} CELL;
+
+CELL *connectilize(int size, double world[size][size], int i, int j)
+{
+  if (i >=size || j >=size)
+    return NULL;
+
+  CELL *newCell, *tempCell;
+  newCell = (CELL*)malloc(sizeof(CELL));
+
+  tempCell = newCell;
+  tempCell->health = world[i][j];
+  tempCell->right = connectilize(size, world, i, j+1);
+  tempCell->down = connectilize(size, world, i+1, j);
+
+  return tempCell;
+
+}
+
+void seeWorld(CELL *head)
+{
+  CELL *rp;
+  CELL *dp = head;
+
+  while(dp)
+  {
+    rp = dp;
+
+    while(rp)
+    {
+      printf("%.1f ", rp->health);
+      rp = rp->right;
+    }
+    printf("\n");
+    dp = dp->down;
+  }
+
+}
+
+int main(int argc, char *argv[])
+{
+  srand(time(NULL));
+  int size = atoi(argv[1]);
+  int interations = atoi(argv[2]);
+  int i, j, k;
+  double world[size][size];
+
+  for (i = 0; i < size; i++)
+  {
+    for (j = 0; j < size; j++)
+    {
+      world[i][j]=rand() % 5;
+      printf("%.1f ", world[i][j]);
+    }
+      printf("\n");
+  }
+
+  printf("\n");
+  printf("\n");
+
+  CELL *head = connectilize(size, world, 0,0);
+  seeWorld(head);
+
+  return 0;
+}
